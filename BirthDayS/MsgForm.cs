@@ -32,7 +32,7 @@ namespace BirthDayS
         const int ExitTime = 5000; //Через сколько мс закрыть окно
         const int ColorChangeTime = 500; //Каждые сколько мс менять цвет сменного фона
 
-        Color preBDbg = Color.Gray; //Цвет статического фона, если день рождения скоро
+        Color preBDbg = Color.Chartreuse; //Цвет статического фона, если день рождения скоро
         Color[] MultiColoBG = //А это цвета фона, если день рождения сегодня
         {
             Color.Red,

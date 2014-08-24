@@ -13,54 +13,87 @@ namespace BirthDayS
 {
     static class Program
     {
+        static Encoding dosEnc = Encoding.GetEncoding("CP866");
         static string Filename = Application.StartupPath + @"\BIRTH.DAY"; //Имя и расположение файла базы данных
         static string LastStartFile = Application.LocalUserAppDataPath.Remove(Application.LocalUserAppDataPath.IndexOf(Application.ProductVersion)) + @"\LastStart"; //Имя и расположение файла проверки запусков
+        
         static DateTime CurrDate = DateTime.Now; //Текущее дата и время
         static int LastStartDate = 0; //Дата последнего включения программы
+        static bool LastStartCheck = true;
 
         static List<string> Names = new List<string>(); //Полочка для имен
         static List<string> Dates = new List<string>(); //Полочка для дат
 
-        static Encoding dosEnc = Encoding.GetEncoding("CP866");
-
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            #region Запускалась ли проверка сегодня?
-            #if !DEBUG //Только если собираем в конфигурации Release
-            try
+            if(args.Length != 0)
             {
-                StreamReader lsFileRead = new StreamReader(LastStartFile); //Читатель файла последнего запуска
-                LastStartDate = Convert.ToInt32(lsFileRead.ReadLine()); //Читаем когда был последний запуск
-                lsFileRead.Close();
-                lsFileRead.Dispose();
-                if (LastStartDate != CurrDate.Day) //Если прочитанная дата запуска не ровняется сегодняшней дате, то пишим в файл сегодняшнюю дату, тк мы сегодня не запуская программку
+                #region Проверка команд запуска
+                for (int c = 0; c < args.Length; c++)
+                {
+                    if(args[c].ToString() == "-noLastStartCheck")
+                    {
+                        LastStartCheck = false;
+                    }
+                    else if(args[c].ToString() == "-LastStartCheck")
+                    {
+                        LastStartCheck = true;
+                    }
+                    else if(args[c].ToString().StartsWith("-CustomFile="))
+                    {
+                        Filename = args[c].ToString().Substring(args[c].ToString().IndexOf("-CustomFile=") + ("-CustomFile=").Length);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Неопознаная команда: " + args[c].ToString(),
+                                    Application.CompanyName + "`s " + Application.ProductName,
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Error);//Выводим диалоговое окно, с текстом ошибки
+                        Application.Exit();
+                    }
+                }
+                #endregion
+            }
+
+            #region Запускалась ли проверка сегодня?
+            #if !DEBUG  //Только если собираем в конфигурации Release
+            if (LastStartCheck)
+            {
+                try
+                {
+                    StreamReader lsFileRead = new StreamReader(LastStartFile); //Читатель файла последнего запуска
+                    LastStartDate = Convert.ToInt32(lsFileRead.ReadLine()); //Читаем когда был последний запуск
+                    lsFileRead.Close();
+                    lsFileRead.Dispose();
+                    if (LastStartDate != CurrDate.Day) //Если прочитанная дата запуска не ровняется сегодняшней дате, то пишим в файл сегодняшнюю дату, тк мы сегодня не запуская программку
+                    {
+                        StreamWriter lsFileWrite = new StreamWriter(LastStartFile, false);
+                        lsFileWrite.WriteLine(CurrDate.Day);
+                        lsFileWrite.Close();
+                        lsFileWrite.Dispose();
+                    }
+                }
+                catch (FileNotFoundException)
                 {
                     StreamWriter lsFileWrite = new StreamWriter(LastStartFile, false);
                     lsFileWrite.WriteLine(CurrDate.Day);
                     lsFileWrite.Close();
                     lsFileWrite.Dispose();
                 }
-            }
-            catch (FileNotFoundException)
-            {
-                StreamWriter lsFileWrite = new StreamWriter(LastStartFile, false);
-                lsFileWrite.WriteLine(CurrDate.Day);
-                lsFileWrite.Close();
-                lsFileWrite.Dispose();
-            }
-            catch (Exception ex)
-            {
-                #region Обработка ошибок
-                MessageBox.Show(ex.ToString(),
-                                Application.CompanyName + "`s " + Application.ProductName,
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Error);//Выводим диалоговое окно, с текстом ошибки
-                Application.Exit();
-                #endregion
+                catch (Exception ex)
+                {
+                    #region Обработка ошибок
+                    MessageBox.Show(ex.ToString(),
+                                    Application.CompanyName + "`s " + Application.ProductName,
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Error);//Выводим диалоговое окно, с текстом ошибки
+                    Application.Exit();
+                    #endregion
+                }
             }
             #endif
             #endregion

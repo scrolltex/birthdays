@@ -38,7 +38,7 @@
             // SuperPanel
             // 
             this.SuperPanel.AutoSize = true;
-            this.SuperPanel.BackColor = System.Drawing.SystemColors.AppWorkspace;
+            this.SuperPanel.BackColor = System.Drawing.Color.Gainsboro;
             this.SuperPanel.Controls.Add(this.copyright);
             this.SuperPanel.Controls.Add(this.NameLabel);
             this.SuperPanel.Controls.Add(this.PozgravLabel);
