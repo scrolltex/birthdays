@@ -30,7 +30,7 @@ namespace BirthDayS
             Application.SetCompatibleTextRenderingDefault(false);
 
             #region Запускалась ли проверка сегодня?
-#if !DEBUG //Только если собираем в конфигурации Release
+            #if !DEBUG //Только если собираем в конфигурации Release
             try
             {
                 StreamReader lsFileRead = new StreamReader(LastStartFile); //Читатель файла последнего запуска
@@ -62,7 +62,7 @@ namespace BirthDayS
                 Application.Exit();
                 #endregion
             }
-#endif
+            #endif
             #endregion
 
             //Если дата последней проверки не совпадает с текущей, то запускаем приложение
