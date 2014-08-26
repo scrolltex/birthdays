@@ -13,7 +13,7 @@ namespace BirthDayS
 {
     static class Program
     {
-        static Encoding dosEnc = Encoding.GetEncoding("CP866");
+        static Encoding dosEnc = Encoding.GetEncoding("CP866"); //DOS кодировка
         static string Filename = Application.StartupPath + @"\BIRTH.DAY"; //Имя и расположение файла базы данных
         static string LastStartFile = Application.LocalUserAppDataPath.Remove(Application.LocalUserAppDataPath.IndexOf(Application.ProductVersion)) + @"\LastStart"; //Имя и расположение файла проверки запусков
         
