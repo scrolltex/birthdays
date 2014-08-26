@@ -19,7 +19,7 @@ namespace BirthDayS
         
         static DateTime CurrDate = DateTime.Now; //Текущее дата и время
         static int LastStartDate = 0; //Дата последнего включения программы
-        static bool LastStartCheck = true;
+        static bool LastStartCheck = false; //Нужна ли проверка последнего включения
 
         static List<string> Names = new List<string>(); //Полочка для имен
         static List<string> Dates = new List<string>(); //Полочка для дат
@@ -35,11 +35,7 @@ namespace BirthDayS
                 #region Проверка команд запуска
                 for (int c = 0; c < args.Length; c++)
                 {
-                    if(args[c].ToString() == "-noLastStartCheck")
-                    {
-                        LastStartCheck = false;
-                    }
-                    else if(args[c].ToString() == "-LastStartCheck")
+                    if(args[c].ToString() == "-LastStartCheck")
                     {
                         LastStartCheck = true;
                     }
