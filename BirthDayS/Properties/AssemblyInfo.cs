@@ -7,7 +7,7 @@ using System.Resources;
 // набора атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
 // связанные со сборкой.
 [assembly: AssemblyTitle("BirthDayS")]
-[assembly: AssemblyDescription("Программа для напоминания о днях рождениях. Сайт разработчика: http://scrolltex.ru/")]
+[assembly: AssemblyDescription("Программа для напоминания о днях рождениях. Программа была разработана Данилом Калашниковым (scrolltex). Сайт разработчика: http://scrolltex.ru/")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ScrolltexCompany")]
 [assembly: AssemblyProduct("BirthDayS")]
@@ -33,6 +33,6 @@ using System.Resources;
 // Можно задать все значения или принять номера сборки и редакции по умолчанию 
 // используя "*", как показано ниже:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.3.0")]
-[assembly: AssemblyFileVersion("1.0.3.0")]
+[assembly: AssemblyVersion("2.0.0.0")]
+[assembly: AssemblyFileVersion("2.0.0.0")]
 [assembly: NeutralResourcesLanguageAttribute("ru-RU")]

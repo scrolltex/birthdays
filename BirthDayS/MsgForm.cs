@@ -137,7 +137,7 @@ namespace BirthDayS
                 CurrBGid = 0;
         }
 
-        //Усли сработал таймер выхода
+        //Если сработал таймер выхода
         private void exitTimerTick(object sender, EventArgs e)
         {
             //То просто закрываем эту форму
