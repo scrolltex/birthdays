@@ -7,7 +7,7 @@ using System.Resources;
 // набора атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
 // связанные со сборкой.
 [assembly: AssemblyTitle("BirthDayS")]
-[assembly: AssemblyDescription("Программа для напоминания о днях рождениях. Программа была разработана Данилом Калашниковым (scrolltex). Сайт разработчика: http://scrolltex.ru/")]
+[assembly: AssemblyDescription("Программа BirthDayS предназначена для напоминания о днях рождения.  Более подробно в файле readme.docx")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ScrolltexCompany")]
 [assembly: AssemblyProduct("BirthDayS")]

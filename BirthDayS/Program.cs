@@ -170,7 +170,13 @@ namespace BirthDayS
                                         MessageBoxButtons.YesNoCancel,
                                         MessageBoxIcon.Error) == DialogResult.Yes)//Выводим диалоговое окно, с текстом ошибки
                 {
-
+                    StreamWriter sw = new StreamWriter("Errors.ser", true);
+                    sw.WriteLine("Время: " + CurrDate.Day + "." + CurrDate.Month + " " + CurrDate.Hour + ":" + CurrDate.Minute);
+                    sw.WriteLine("ОС: " + Environment.OSVersion);
+                    sw.WriteLine("Ошибка:\n" + msg);
+                    sw.WriteLine("===========================================================================================");
+                    sw.Close();
+                    sw.Dispose();
                 }
             }
             Application.Exit();
