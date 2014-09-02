@@ -20,6 +20,7 @@ namespace BirthDayS
         static DateTime CurrDate = DateTime.Now; //Текущее дата и время
         static int LastStartDate = 0; //Дата последнего включения программы
         static bool LastStartCheck = false; //Нужна ли проверка последнего включения
+        static bool ShowErrors = false;
 
         static List<string> Names = new List<string>(); //Полочка для имен
         static List<string> Dates = new List<string>(); //Полочка для дат
@@ -35,21 +36,24 @@ namespace BirthDayS
                 #region Проверка команд запуска
                 for (int c = 0; c < args.Length; c++)
                 {
-                    if(args[c].ToString() == "-LastStartCheck")
+                    if (args[c].StartsWith("-"))
                     {
-                        LastStartCheck = true;
-                    }
-                    else if(args[c].ToString().StartsWith("-CustomFile="))
-                    {
-                        Filename = args[c].ToString().Substring(args[c].ToString().IndexOf("-CustomFile=") + ("-CustomFile=").Length);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Неопознаная команда: " + args[c].ToString(),
-                                    Application.CompanyName + "`s " + Application.ProductName,
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error);//Выводим диалоговое окно, с текстом ошибки
-                        Application.Exit();
+                        if (args[c].ToString() == "-ls")
+                        {
+                            LastStartCheck = true;
+                        }
+                        else if(args[c].ToString() == "-d")
+                        {
+                            ShowErrors = true;
+                        }
+                        else if (args[c].ToString() == "-cf ")
+                        {
+                            Filename = args[c + 1].ToString();
+                        }
+                        else
+                        {
+                            Error("Неопознаная команда: " + args[c].ToString());
+                        }
                     }
                 }
                 #endregion
@@ -82,13 +86,7 @@ namespace BirthDayS
                 }
                 catch (Exception ex)
                 {
-                    #region Обработка ошибок
-                    MessageBox.Show(ex.ToString(),
-                                    Application.CompanyName + "`s " + Application.ProductName,
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error);//Выводим диалоговое окно, с текстом ошибки
-                    Application.Exit();
-                    #endregion
+                    Error(ex.ToString());
                 }
             }
             #endif
@@ -157,16 +155,25 @@ namespace BirthDayS
                 }
                 catch (Exception ex)
                 {
-                    #region Обработка ошибок
-                    MessageBox.Show(ex.ToString(),
-                                    Application.CompanyName + "`s " + Application.ProductName,
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error);//Выводим диалоговое окно, с текстом ошибки
-                    Application.Exit();
-                    #endregion
+                    Error(ex.ToString());
                 }
             }
             else Application.Exit(); //Иначе уходим... Но завтра вернемся!!!
+        }
+
+        static public void Error(string msg)
+        {
+            if(ShowErrors)
+            {
+                if(MessageBox.Show("Ошибка:\n" + msg + "\n\nСохранить в лог ошибок?",
+                                        Application.CompanyName + "`s " + Application.ProductName,
+                                        MessageBoxButtons.YesNoCancel,
+                                        MessageBoxIcon.Error) == DialogResult.Yes)//Выводим диалоговое окно, с текстом ошибки
+                {
+
+                }
+            }
+            Application.Exit();
         }
     }
 }
