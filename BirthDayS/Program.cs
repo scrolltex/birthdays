@@ -84,6 +84,13 @@ namespace BirthDayS
                     Error(ex.Message);
                 }
             }
+            else
+            {
+                StreamWriter lsFileWrite = new StreamWriter(LastStartFile, false);
+                lsFileWrite.WriteLine(CurrDate.Day);
+                lsFileWrite.Close();
+                lsFileWrite.Dispose();
+            }
             #endif
             #endregion
 
