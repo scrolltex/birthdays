@@ -59,8 +59,8 @@ namespace BirthDayS_Tools
 
                 MessageBox.Show("Успешно удалено!",
                                    Application.CompanyName + "`s " + Application.ProductName,
-                                   MessageBoxButtons.YesNoCancel,
-                                   MessageBoxIcon.Error); //Выводим диалоговое окно
+                                   MessageBoxButtons.OK,
+                                   MessageBoxIcon.Information); //Выводим диалоговое окно
             }
             catch (Exception ex)
             {
@@ -81,18 +81,19 @@ namespace BirthDayS_Tools
                 Shortcut = (IWshShortcut)WshShell.CreateShortcut(DesktopDir + @"\BirthDayS.lnk");
 
 
-                string Target = Application.StartupPath + @"\BirthDayS.exe";
+                string Arguments = "";
                 if (LSC_cb.Checked)
                 {
-                    Target += " -ls";
+                    Arguments += " -ls";
                 }
                 if(OtherBaseDir_cb.Checked)
                 {
-                    Target += " -cf " + OtherBaseDir_Text.Text; 
+                    Arguments += " -cf " + OtherBaseDir_Text.Text; 
                 }
 
                 // Задание некоторых простых свойств ярлыка.
-                Shortcut.TargetPath = Target;
+                Shortcut.TargetPath = Application.StartupPath + @"\BirthDayS.exe";
+                Shortcut.Arguments = Arguments;
                 Shortcut.WindowStyle = 1;
                 Shortcut.WorkingDirectory = DesktopDir;
                 Shortcut.IconLocation = "notepad.exe, 0"; // Значком ярлыка будет первый значок из файла notepad.exe
@@ -101,8 +102,8 @@ namespace BirthDayS_Tools
 
                 MessageBox.Show("Успешно создано!",
                                    Application.CompanyName + "`s " + Application.ProductName,
-                                   MessageBoxButtons.YesNoCancel,
-                                   MessageBoxIcon.Error); //Выводим диалоговое окно
+                                   MessageBoxButtons.OK,
+                                   MessageBoxIcon.Information); //Выводим диалоговое окно
             }
             catch(Exception ex)
             {
