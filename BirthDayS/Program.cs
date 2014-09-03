@@ -20,7 +20,6 @@ namespace BirthDayS
         static DateTime CurrDate = DateTime.Now; //Текущее дата и время
         static int LastStartDate = 0; //Дата последнего включения программы
         static bool LastStartCheck = false; //Нужна ли проверка последнего включения
-        static bool ShowErrors = false;
 
         static List<string> Names = new List<string>(); //Полочка для имен
         static List<string> Dates = new List<string>(); //Полочка для дат
@@ -41,10 +40,6 @@ namespace BirthDayS
                         if (args[c].ToString() == "-ls")
                         {
                             LastStartCheck = true;
-                        }
-                        else if(args[c].ToString() == "-d")
-                        {
-                            ShowErrors = true;
                         }
                         else if (args[c].ToString() == "-cf ")
                         {
@@ -86,7 +81,7 @@ namespace BirthDayS
                 }
                 catch (Exception ex)
                 {
-                    Error(ex.ToString());
+                    Error(ex.Message);
                 }
             }
             #endif
@@ -155,7 +150,7 @@ namespace BirthDayS
                 }
                 catch (Exception ex)
                 {
-                    Error(ex.ToString());
+                    Error(ex.Message);
                 }
             }
             else Application.Exit(); //Иначе уходим... Но завтра вернемся!!!
@@ -163,22 +158,20 @@ namespace BirthDayS
 
         static public void Error(string msg)
         {
-            if(ShowErrors)
+            if (MessageBox.Show("Ошибка:\n" + msg + "\n\nСохранить в лог ошибок?",
+                               Application.CompanyName + "`s " + Application.ProductName,
+                               MessageBoxButtons.YesNoCancel,
+                               MessageBoxIcon.Error) == DialogResult.Yes)//Выводим диалоговое окно, с текстом ошибки
             {
-                if(MessageBox.Show("Ошибка:\n" + msg + "\n\nСохранить в лог ошибок?",
-                                        Application.CompanyName + "`s " + Application.ProductName,
-                                        MessageBoxButtons.YesNoCancel,
-                                        MessageBoxIcon.Error) == DialogResult.Yes)//Выводим диалоговое окно, с текстом ошибки
-                {
-                    StreamWriter sw = new StreamWriter("Errors.ser", true);
-                    sw.WriteLine("Время: " + CurrDate.Day + "." + CurrDate.Month + " " + CurrDate.Hour + ":" + CurrDate.Minute);
-                    sw.WriteLine("ОС: " + Environment.OSVersion);
-                    sw.WriteLine("Ошибка:\n" + msg);
-                    sw.WriteLine("===========================================================================================");
-                    sw.Close();
-                    sw.Dispose();
-                }
+                StreamWriter sw = new StreamWriter("Errors.ser", true);
+                sw.WriteLine("Время: " + CurrDate.Day + "." + CurrDate.Month + " " + CurrDate.Hour + ":" + CurrDate.Minute);
+                sw.WriteLine("ОС: " + Environment.OSVersion);
+                sw.WriteLine("Ошибка:\n" + msg);
+                sw.WriteLine("===========================================================================================");
+                sw.Close();
+                sw.Dispose();
             }
+
             Application.Exit();
         }
     }
