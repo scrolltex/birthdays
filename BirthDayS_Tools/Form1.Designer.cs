@@ -41,7 +41,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(0, 19);
+            this.button2.Location = new System.Drawing.Point(11, 150);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(200, 30);
             this.button2.TabIndex = 2;
@@ -51,7 +51,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(11, 189);
+            this.button1.Location = new System.Drawing.Point(11, 186);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(200, 30);
             this.button1.TabIndex = 3;
@@ -65,17 +65,16 @@
             this.groupBox1.Controls.Add(this.OtherBaseDir_Text);
             this.groupBox1.Controls.Add(this.OtherBaseDir_cb);
             this.groupBox1.Controls.Add(this.LSC_cb);
-            this.groupBox1.Controls.Add(this.button2);
             this.groupBox1.Location = new System.Drawing.Point(11, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(200, 171);
+            this.groupBox1.Size = new System.Drawing.Size(200, 132);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Автозапуск";
+            this.groupBox1.Text = "Параметры";
             // 
             // OtherBaseDir_Find
             // 
-            this.OtherBaseDir_Find.Location = new System.Drawing.Point(7, 141);
+            this.OtherBaseDir_Find.Location = new System.Drawing.Point(6, 104);
             this.OtherBaseDir_Find.Name = "OtherBaseDir_Find";
             this.OtherBaseDir_Find.Size = new System.Drawing.Size(187, 23);
             this.OtherBaseDir_Find.TabIndex = 7;
@@ -85,7 +84,7 @@
             // 
             // OtherBaseDir_Text
             // 
-            this.OtherBaseDir_Text.Location = new System.Drawing.Point(7, 115);
+            this.OtherBaseDir_Text.Location = new System.Drawing.Point(6, 78);
             this.OtherBaseDir_Text.Name = "OtherBaseDir_Text";
             this.OtherBaseDir_Text.Size = new System.Drawing.Size(187, 20);
             this.OtherBaseDir_Text.TabIndex = 6;
@@ -93,7 +92,7 @@
             // OtherBaseDir_cb
             // 
             this.OtherBaseDir_cb.AutoSize = true;
-            this.OtherBaseDir_cb.Location = new System.Drawing.Point(7, 79);
+            this.OtherBaseDir_cb.Location = new System.Drawing.Point(6, 42);
             this.OtherBaseDir_cb.Name = "OtherBaseDir_cb";
             this.OtherBaseDir_cb.Size = new System.Drawing.Size(191, 30);
             this.OtherBaseDir_cb.TabIndex = 5;
@@ -103,7 +102,7 @@
             // LSC_cb
             // 
             this.LSC_cb.AutoSize = true;
-            this.LSC_cb.Location = new System.Drawing.Point(7, 56);
+            this.LSC_cb.Location = new System.Drawing.Point(6, 19);
             this.LSC_cb.Name = "LSC_cb";
             this.LSC_cb.Size = new System.Drawing.Size(128, 17);
             this.LSC_cb.TabIndex = 3;
@@ -118,6 +117,7 @@
             this.ClientSize = new System.Drawing.Size(223, 228);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.button1);
+            this.Controls.Add(this.button2);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
