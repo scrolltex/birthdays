@@ -66,7 +66,10 @@ namespace BirthDayS
                     player1.Load();
                     player1.Play();
                 }
-                catch (Exception ex) { }
+                catch (Exception ex)
+                {
+                    Program.Error(ex.ToString());
+                }
             }
             else if (BirthDayNow == 2)
             {
@@ -76,7 +79,10 @@ namespace BirthDayS
                     player2.Load();
                     player2.Play();
                 }
-                catch (Exception ex) { }
+                catch (Exception ex) 
+                {
+                    Program.Error(ex.ToString());
+                }
             }
             else
             {
@@ -86,7 +92,10 @@ namespace BirthDayS
                     player2.Load();
                     player2.Play();
                 }
-                catch (Exception ex) { }
+                catch (Exception ex)
+                {
+                    Program.Error(ex.ToString());
+                }
             }
 
             //Пишем на форме имя
@@ -121,6 +130,8 @@ namespace BirthDayS
 
                 case Keys.F1:
                     AboutBox about = new AboutBox(); //Если нажата F1, то показываем окно о приложении.
+                    this.TopMost = false;
+                    about.TopMost = true;
                     about.ShowDialog();
                     break;
             }
@@ -154,6 +165,11 @@ namespace BirthDayS
             this.TopMost = false;
             about.TopMost = true;
             about.ShowDialog();
+        }
+
+        private void siteLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://scrolltex.ru");
         }
     }
 }

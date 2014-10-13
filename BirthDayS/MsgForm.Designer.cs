@@ -33,6 +33,7 @@
             this.copyright = new System.Windows.Forms.LinkLabel();
             this.NameLabel = new System.Windows.Forms.Label();
             this.PozgravLabel = new System.Windows.Forms.Label();
+            this.siteLink = new System.Windows.Forms.LinkLabel();
             this.SuperPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -40,6 +41,7 @@
             // 
             this.SuperPanel.AutoSize = true;
             this.SuperPanel.BackColor = System.Drawing.Color.Gainsboro;
+            this.SuperPanel.Controls.Add(this.siteLink);
             this.SuperPanel.Controls.Add(this.copyright);
             this.SuperPanel.Controls.Add(this.NameLabel);
             this.SuperPanel.Controls.Add(this.PozgravLabel);
@@ -89,6 +91,18 @@
             this.PozgravLabel.Text = "Поздравляем с днем рождения!";
             this.PozgravLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // siteLink
+            // 
+            this.siteLink.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.siteLink.AutoSize = true;
+            this.siteLink.Location = new System.Drawing.Point(3, 73);
+            this.siteLink.Name = "siteLink";
+            this.siteLink.Size = new System.Drawing.Size(57, 13);
+            this.siteLink.TabIndex = 3;
+            this.siteLink.TabStop = true;
+            this.siteLink.Text = "scrolltex.ru";
+            this.siteLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.siteLink_LinkClicked);
+            // 
             // MsgForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -119,6 +133,7 @@
         private System.Windows.Forms.Label PozgravLabel;
         private System.Windows.Forms.Label NameLabel;
         private System.Windows.Forms.LinkLabel copyright;
+        private System.Windows.Forms.LinkLabel siteLink;
 
 
     }
