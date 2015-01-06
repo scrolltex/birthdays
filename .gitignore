@@ -4,3 +4,6 @@ BirthDayS_Tools/bin/
 BirthDayS_Tools/obj/
 
 BirthDayS.v12.suo
+
+[Oo]utput/*
+~$[\w+].*
