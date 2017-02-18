@@ -7,11 +7,11 @@ using System.Resources;
 // набора атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
 // связанные со сборкой.
 [assembly: AssemblyTitle("BirthDayS")]
-[assembly: AssemblyDescription("Программа BirthDayS предназначена для напоминания о днях рождения.  Более подробно в файле readme.docx")]
+[assembly: AssemblyDescription("Программа BirthDayS предназначена для напоминания о днях рождения.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ScrolltexCompany")]
 [assembly: AssemblyProduct("BirthDayS")]
-[assembly: AssemblyCopyright("Copyright © Данил Калашников 2014")]
+[assembly: AssemblyCopyright("© Данил Калашников 2014-2017")]
 [assembly: AssemblyTrademark("BirthDayS")]
 [assembly: AssemblyCulture("")]
 
@@ -33,6 +33,6 @@ using System.Resources;
 // Можно задать все значения или принять номера сборки и редакции по умолчанию 
 // используя "*", как показано ниже:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2.0.0.0")]
-[assembly: AssemblyFileVersion("2.0.0.0")]
+[assembly: AssemblyVersion("2.1.0.0")]
+[assembly: AssemblyFileVersion("2.1.0.0")]
 [assembly: NeutralResourcesLanguageAttribute("ru-RU")]

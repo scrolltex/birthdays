@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 
@@ -13,16 +8,16 @@ namespace BirthDayS
 {
     static class Program
     {
-        static Encoding dosEnc = Encoding.GetEncoding("CP866"); //DOS кодировка
-        static string Filename = Application.StartupPath + @"\BIRTH.DAY"; //Имя и расположение файла базы данных
-        static string LastStartFile = Application.LocalUserAppDataPath.Remove(Application.LocalUserAppDataPath.IndexOf(Application.ProductVersion)) + @"\LastStart"; //Имя и расположение файла проверки запусков
-        
-        static DateTime CurrDate = DateTime.Now; //Текущее дата и время
-        static int LastStartDate = 0; //Дата последнего включения программы
-        static bool LastStartCheck = false; //Нужна ли проверка последнего включения
+        private static readonly Encoding DosEnc = Encoding.GetEncoding("CP866"); //DOS кодировка
+        private static string _filename = Application.StartupPath + @"\BIRTH.DAY"; //Имя и расположение файла базы данных
+        private static readonly string LastStartFile = Application.LocalUserAppDataPath.Remove(Application.LocalUserAppDataPath.IndexOf(Application.ProductVersion)) + @"\LastStart"; //Имя и расположение файла проверки запусков
 
-        static List<string> Names = new List<string>(); //Полочка для имен
-        static List<string> Dates = new List<string>(); //Полочка для дат
+        private static DateTime _currDate = DateTime.Now; //Текущее дата и время
+        private static int _lastStartDate = 0; //Дата последнего включения программы
+        private static bool _lastStartCheck = false; //Нужна ли проверка последнего включения
+
+        private static List<string> _names = new List<string>(); //Полочка для имен
+        private static List<string> _dates = new List<string>(); //Полочка для дат
 
         [STAThread]
         static void Main(string[] args)
@@ -32,50 +27,49 @@ namespace BirthDayS
 
             if(args.Length != 0)
             {
-                #region Проверка команд запуска
-                for (int c = 0; c < args.Length; c++)
+                for (var c = 0; c < args.Length; c++)
                 {
-                    if (args[c].StartsWith("-"))
+                    if(!args[c].StartsWith("-"))
+                        continue;
+
+                    switch(args[c])
                     {
-                        if (args[c].ToString() == "-ls")
-                        {
-                            LastStartCheck = true;
-                        }
-                        else if (args[c].ToString() == "-cf ")
-                        {
-                            Filename = args[c + 1].ToString();
-                        }
-                        else
-                        {
-                            Error("Неопознаная команда: " + args[c].ToString());
-                        }
+                        case "-ls":
+                            _lastStartCheck = true;
+                            break;
+
+                        case "-cf ":
+                            _filename = args[++c];
+                            break;
+
+                        default:
+                            Error("Неопознаная команда: " + args[c]);
+                            break;
                     }
                 }
-                #endregion
             }
-
-            #region Запускалась ли проверка сегодня?
-            #if !DEBUG  //Только если собираем в конфигурации Release
-            if (LastStartCheck)
+            
+            #if !DEBUG 
+            if (_lastStartCheck)
             {
                 try
                 {
-                    StreamReader lsFileRead = new StreamReader(LastStartFile); //Читатель файла последнего запуска
-                    LastStartDate = Convert.ToInt32(lsFileRead.ReadLine()); //Читаем когда был последний запуск
+                    var lsFileRead = new StreamReader(LastStartFile); //Читатель файла последнего запуска
+                    _lastStartDate = Convert.ToInt32(lsFileRead.ReadLine()); //Читаем когда был последний запуск
                     lsFileRead.Close();
                     lsFileRead.Dispose();
-                    if (LastStartDate != CurrDate.Day) //Если прочитанная дата запуска не ровняется сегодняшней дате, то пишим в файл сегодняшнюю дату, тк мы сегодня не запуская программку
+                    if (_lastStartDate != _currDate.Day) //Если прочитанная дата запуска не ровняется сегодняшней дате, то пишим в файл сегодняшнюю дату, тк мы сегодня не запуская программку
                     {
-                        StreamWriter lsFileWrite = new StreamWriter(LastStartFile, false);
-                        lsFileWrite.WriteLine(CurrDate.Day);
+                        var lsFileWrite = new StreamWriter(LastStartFile, false);
+                        lsFileWrite.WriteLine(_currDate.Day);
                         lsFileWrite.Close();
                         lsFileWrite.Dispose();
                     }
                 }
                 catch (FileNotFoundException)
                 {
-                    StreamWriter lsFileWrite = new StreamWriter(LastStartFile, false);
-                    lsFileWrite.WriteLine(CurrDate.Day);
+                    var lsFileWrite = new StreamWriter(LastStartFile, false);
+                    lsFileWrite.WriteLine(_currDate.Day);
                     lsFileWrite.Close();
                     lsFileWrite.Dispose();
                 }
@@ -86,97 +80,107 @@ namespace BirthDayS
             }
             else
             {
-                StreamWriter lsFileWrite = new StreamWriter(LastStartFile, false);
-                lsFileWrite.WriteLine(CurrDate.Day);
+                var lsFileWrite = new StreamWriter(LastStartFile, false);
+                lsFileWrite.WriteLine(_currDate.Day);
                 lsFileWrite.Close();
                 lsFileWrite.Dispose();
             }
-            #endif
-            #endregion
+#endif
 
             //Если дата последней проверки не совпадает с текущей, то запускаем приложение
-            if (LastStartDate != CurrDate.Day)
+            if (_lastStartDate != _currDate.Day)
             {
                 try
                 {
-                    #region Читаем и распихиваем по полочкам
-                    string buff; //Буфер, в который мы сначала записываем прочитанную информацию
-                    StreamReader reader = new StreamReader(Filename, dosEnc); //Новый экземпляр "Читателя"
-                    while (!reader.EndOfStream) //Читаем все до конца!!!
+                    using (var reader = new StreamReader(_filename, DosEnc))
                     {
-                        buff = reader.ReadLine(); //Кидаем в буфер
-                        if (!string.IsNullOrWhiteSpace(buff))
+                        while(!reader.EndOfStream) //Читаем все до конца
                         {
-                            Dates.Add(buff.Substring(0, 8)); //Первые 9 символов - это дата, кидаем на полочку с датами.
-                            Names.Add(buff.Substring(9)); //Остальное имя.
-                        }
-                    }
-                    reader.Close(); //Отправляем "читателя" отдыхать
-                    reader.Dispose();
-                    #endregion
+                            var buff = reader.ReadLine();
+                            if(string.IsNullOrWhiteSpace(buff))
+                                continue;
 
-                    #region Разбираем и проверяем даты и выводи сообщения
-                    for (int i = 0; i < Dates.Count; i++)//Разбираем все даты на полочке
+                            //Первые 9 символов - это дата, кидаем на полочку с датами. Остальное это имя
+                            _dates.Add(buff.Substring(0, 8));
+                            _names.Add(buff.Substring(9));
+                        }
+
+                        reader.Close(); 
+                    }
+                    
+#if DEBUG
+                    _names = new List<string> { "Иванов Иван Иванович" };
+                    _dates = new List<string> { _currDate.ToShortDateString() };
+#endif
+
+                    //Разбираем все даты на полочке
+                    for(var i = 0; i < _dates.Count; i++)
                     {
-                        if (Convert.ToInt32(Dates[i].Substring(3, 2)) == CurrDate.Month) //Если день рождения в этом месяце то идем дальше
+                        //Пропуск дней рождения не в текущем месяце
+                        if(Convert.ToInt32(_dates[i].Substring(3, 2)) != _currDate.Month)
+                            continue;
+
+                        var day = Convert.ToInt32(_dates[i].Substring(0, 2));
+
+                        //Если день рождения сегодня, то поздравляем
+                        if(day == _currDate.Day) 
                         {
-                            if (Convert.ToInt32(Dates[i].Substring(0, 2)) == CurrDate.Day) //Если день рождения сегодня, то поздравляем
+                            var msg = new MsgForm(_names[i], MsgForm.DisplayMode.Today);
+                            msg.ShowDialog();
+                            msg.Dispose();
+                        }
+                        else if (day == _currDate.AddDays(1).Day) //Если день рождения завтра, то выводим сообщение
+                        {
+                            var msg = new MsgForm(_names[i], MsgForm.DisplayMode.Tomorrow);
+                            msg.ShowDialog();
+                            msg.Dispose();
+                        }
+
+                        if (_currDate.DayOfWeek == DayOfWeek.Friday) //А если сегодня пятница, то еще проверяем на воскресенье с понедельником
+                        {
+                            if (day == _currDate.AddDays(2).Day ||
+                                day == _currDate.AddDays(3).Day)
                             {
-                                MsgForm msg = new MsgForm(Names[i], 1); //Создаем новый экземпляр формы сообщений, в который мы передаем Имя, дату и сегодня ли лень рождения
-                                msg.ShowDialog(); //И отображаем его как диалоговое окно
-                                msg.Dispose();
-                            }
-                            else if (Convert.ToInt32(Dates[i].Substring(0, 2)) == CurrDate.AddDays(1).Day) //Если день рождения завтра, то выводим сообщение
-                            {
-                                MsgForm msg = new MsgForm(Names[i], 2);
+                                var msg = new MsgForm(_names[i], MsgForm.DisplayMode.Soon);
                                 msg.ShowDialog();
                                 msg.Dispose();
                             }
+                        }
 
-                            if (CurrDate.DayOfWeek == DayOfWeek.Friday) //А если сегодня пятница, то еще проверяем на воскресенье с понедельником
+                        if(_currDate.DayOfWeek == DayOfWeek.Monday) //Прошедшее
+                        {
+                            if(day == _currDate.AddDays(-1).Day ||
+                               day == _currDate.AddDays(-2).Day)
                             {
-                                if (Convert.ToInt32(Dates[i].Substring(0, 2)) == CurrDate.AddDays(2).Day)
-                                {
-                                    MsgForm msg = new MsgForm(Names[i], 3);
-                                    msg.ShowDialog();
-                                    msg.Dispose();
-                                }
-                                else if (Convert.ToInt32(Dates[i].Substring(0, 2)) == CurrDate.AddDays(3).Day)
-                                {
-                                    MsgForm msg = new MsgForm(Names[i], 3);
-                                    msg.ShowDialog();
-                                    msg.Dispose();
-                                }
-
+                                var msg = new MsgForm(_names[i], MsgForm.DisplayMode.Gone);
+                                msg.ShowDialog();
+                                msg.Dispose();
                             }
                         }
                     }
-                    #endregion
 
-                    Application.Exit(); //Мы все сделали, поэтому выходим
+                    Application.Exit(); 
                 }
                 catch (Exception ex)
                 {
                     Error(ex.Message);
                 }
             }
-            else Application.Exit(); //Иначе уходим... Но завтра вернемся!!!
+            else Application.Exit();
         }
 
-        static public void Error(string msg)
+        public static void Error(string msg)
         {
-            if (MessageBox.Show("Ошибка:\n" + msg + "\n\nСохранить в лог ошибок?",
-                               Application.CompanyName + "`s " + Application.ProductName,
-                               MessageBoxButtons.YesNoCancel,
-                               MessageBoxIcon.Error) == DialogResult.Yes)//Выводим диалоговое окно, с текстом ошибки
+            //Выводим диалоговое окно, с текстом ошибки
+            MessageBox.Show("Ошибка:\n" + msg, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            using(var sw = new StreamWriter("errors.log", true))
             {
-                StreamWriter sw = new StreamWriter("Errors.ser", true);
-                sw.WriteLine("Время: " + CurrDate.Day + "." + CurrDate.Month + " " + CurrDate.Hour + ":" + CurrDate.Minute);
+                sw.WriteLine($"Время: {_currDate.Day}.{_currDate.Month} {_currDate.Hour}:{_currDate.Minute}");
                 sw.WriteLine("ОС: " + Environment.OSVersion);
                 sw.WriteLine("Ошибка:\n" + msg);
-                sw.WriteLine("===========================================================================================");
+                sw.WriteLine();
                 sw.Close();
-                sw.Dispose();
             }
 
             Application.Exit();

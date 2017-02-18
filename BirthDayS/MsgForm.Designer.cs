@@ -30,10 +30,10 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MsgForm));
             this.SuperPanel = new System.Windows.Forms.Panel();
+            this.siteLink = new System.Windows.Forms.LinkLabel();
             this.copyright = new System.Windows.Forms.LinkLabel();
             this.NameLabel = new System.Windows.Forms.Label();
             this.PozgravLabel = new System.Windows.Forms.Label();
-            this.siteLink = new System.Windows.Forms.LinkLabel();
             this.SuperPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -51,6 +51,18 @@
             this.SuperPanel.Name = "SuperPanel";
             this.SuperPanel.Size = new System.Drawing.Size(378, 86);
             this.SuperPanel.TabIndex = 0;
+            // 
+            // siteLink
+            // 
+            this.siteLink.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.siteLink.AutoSize = true;
+            this.siteLink.Location = new System.Drawing.Point(3, 73);
+            this.siteLink.Name = "siteLink";
+            this.siteLink.Size = new System.Drawing.Size(57, 13);
+            this.siteLink.TabIndex = 3;
+            this.siteLink.TabStop = true;
+            this.siteLink.Text = "scrolltex.ru";
+            this.siteLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.siteLink_LinkClicked);
             // 
             // copyright
             // 
@@ -90,18 +102,6 @@
             this.PozgravLabel.TabIndex = 0;
             this.PozgravLabel.Text = "Поздравляем с днем рождения!";
             this.PozgravLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // siteLink
-            // 
-            this.siteLink.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.siteLink.AutoSize = true;
-            this.siteLink.Location = new System.Drawing.Point(3, 73);
-            this.siteLink.Name = "siteLink";
-            this.siteLink.Size = new System.Drawing.Size(57, 13);
-            this.siteLink.TabIndex = 3;
-            this.siteLink.TabStop = true;
-            this.siteLink.Text = "scrolltex.ru";
-            this.siteLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.siteLink_LinkClicked);
             // 
             // MsgForm
             // 

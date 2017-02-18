@@ -1,39 +1,57 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace BirthDayS
 {
     public partial class MsgForm : Form
     {
-        Timer colorChangeTimer = new Timer(); //Таймер для смены цвета фона
-        Timer exitTimer = new Timer(); //Таймер для закрытия через определенное время
+        private readonly Timer _colorChangeTimer = new Timer();
+        private readonly Timer _exitTimer = new Timer();
 
-        System.Media.SoundPlayer player1 = new System.Media.SoundPlayer(HappyBirthdaySoundFile);
-        System.Media.SoundPlayer player2 = new System.Media.SoundPlayer(HappyBirthdayLaterSoundFile);
+        readonly System.Media.SoundPlayer _player1 = new System.Media.SoundPlayer(Application.StartupPath + @"\Birthday1.wav");
+        readonly System.Media.SoundPlayer _player2 = new System.Media.SoundPlayer(Application.StartupPath + @"\Birthday2.wav");
+        
+        public enum DisplayMode
+        {
+            Gone = -1,
+            Today = 0,
+            Tomorrow = 1,
+            Soon = 2
+        }
 
-        string BDName = null; //Имя
-        int BirthDayNow; //Сегодня ли день рождения?
-        int CurrBGid = 0; //Текущий id фона (сменного)
+        private readonly string _name;
+        private readonly DisplayMode _mode;
+        
+        private string ModeText
+        {
+            get
+            {
+                switch(_mode)
+                {
+                    case DisplayMode.Gone:
+                        return "День рождения прошло";
 
-        static string HappyBirthdaySoundFile = Application.StartupPath + @"\Birthday1.wav";
-        static string HappyBirthdayLaterSoundFile = Application.StartupPath + @"\Birthday2.wav";
+                    case DisplayMode.Today:
+                        return "Поздравляем с днем рождения!";
 
-        const string BDNowText = "Поздравляем с днем рождения!"; //Текст поздравления, если день рождения сегодня
-        const string BDTommorowText = "Завтра день рождения!"; //Если день рождения завтра
-        const string BDLaterText = "Скоро день рождения!"; //Если день рождения скоро
+                    case DisplayMode.Tomorrow:
+                        return "Завтра день рождения!";
 
-        const int ExitTime = 5000; //Через сколько мс закрыть окно
-        const int ColorChangeTime = 500; //Каждые сколько мс менять цвет сменного фона
+                    case DisplayMode.Soon:
+                        return "Скоро день рождения";
 
-        Color preBDbg = Color.Chartreuse; //Цвет статического фона, если день рождения скоро
-        Color[] MultiColoBG = //А это цвета фона, если день рождения сегодня
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+
+        private const int ExitTime = 5000; //Через сколько мс закрыть окно
+        private const int ColorChangeTime = 500; //Каждые сколько мс менять цвет сменного фона
+
+        private readonly Color _staticColor = Color.Chartreuse;
+        private readonly Color[] _colorRotation =
         {
             Color.Red,
             Color.Green,
@@ -41,96 +59,77 @@ namespace BirthDayS
             Color.Yellow
         };
 
-        public MsgForm(string n, int bdNow) //Конструктор формы, n = Имя, bdNow = Сегодня ли день рождения
+        private int _colorRotation_id = 0;
+
+        public MsgForm(string name, DisplayMode mode)
         {
             InitializeComponent();
 
-            //Присваеваем значения
-            BDName = n;
-            BirthDayNow = bdNow;
+            _name = name;
+            _mode = mode;
         }
 
         private void MsgForm_Load(object sender, EventArgs e)
         {
             //Подписываемся на события
-            this.KeyDown += new KeyEventHandler(this.KeyRasbirator); //Нажатие кнопки
-            this.colorChangeTimer.Tick += new EventHandler(this.colorChandgeTimerTick); //Срабатывание таймера смены цвета
-            this.exitTimer.Tick += new EventHandler(this.exitTimerTick); //Срабатывание таймера выхода
-
-            //Здесь смотрим какой текст выводить
-            if (BirthDayNow == 1)
+            KeyDown += KeyRasbirator;
+            _colorChangeTimer.Tick += ColorChandgeTimerTick;
+            _exitTimer.Tick += ExitTimerTick;
+            
+            try
             {
-                PozgravLabel.Text = BDNowText;
-                try
+                if(_mode == DisplayMode.Today)
                 {
-                    player1.Load();
-                    player1.Play();
+                    _player1.Load();
+                    _player1.Play();
                 }
-                catch (Exception ex)
+                else
                 {
-                    Program.Error(ex.ToString());
+                    _player2.Load();
+                    _player2.Play();
                 }
             }
-            else if (BirthDayNow == 2)
+            catch(Exception ex)
             {
-                PozgravLabel.Text = BDTommorowText;
-                try
-                {
-                    player2.Load();
-                    player2.Play();
-                }
-                catch (Exception ex) 
-                {
-                    Program.Error(ex.ToString());
-                }
-            }
-            else
-            {
-                PozgravLabel.Text = BDLaterText;
-                try
-                {
-                    player2.Load();
-                    player2.Play();
-                }
-                catch (Exception ex)
-                {
-                    Program.Error(ex.ToString());
-                }
+                Program.Error(ex.ToString());
             }
 
-            //Пишем на форме имя
-            NameLabel.Text = BDName;
-
-            if (BirthDayNow == 1) //Если день рождения сегодня, то включаем перебор цветов фона
+            PozgravLabel.Text = ModeText;
+            NameLabel.Text = _name;
+            
+            if(_mode == DisplayMode.Today)
             {
-                colorChangeTimer.Interval = ColorChangeTime;
-                colorChangeTimer.Start();
-                this.BackColor = MultiColoBG[CurrBGid];
-                CurrBGid++;
+                _colorChangeTimer.Interval = ColorChangeTime;
+                _colorChangeTimer.Start();
+                BackColor = _colorRotation[0];
+                _colorRotation_id = 1;
             }
-            else this.BackColor = preBDbg;
-
-            //И устанавливаем таймер выхода
-            exitTimer.Interval = ExitTime;
-            exitTimer.Start();
+            else BackColor = _staticColor;
+            
+            _exitTimer.Interval = ExitTime;
+            _exitTimer.Start();
         }
 
         //Функция разбора нажатых клавиш
         private void KeyRasbirator(object sender, KeyEventArgs e)
         {
+            // ReSharper disable once SwitchStatementMissingSomeCases
             switch(e.KeyCode)
             {
+                //Если нажата Escape, то выключаем все приложение
                 case Keys.Escape:
-                    Application.Exit(); //Если нажата Escape, то выключаем все приложение
+                    Application.Exit();
                     break;
 
+                //Если нажата Space, то закрываем эту форму, и включаем следующию, если такова имеется
                 case Keys.Space:
-                    this.Close(); //Если нажата Space, то закрываем эту форму, и включаем следующию, если такова имеется
+                    Close();
                     break;
 
+                //Если нажата F1, то показываем окно о приложении.
                 case Keys.F1:
-                    AboutBox about = new AboutBox(); //Если нажата F1, то показываем окно о приложении.
-                    this.TopMost = false;
+                    var about = new AboutBox();
+                    TopMost = false;
                     about.TopMost = true;
                     about.ShowDialog();
                     break;
@@ -138,31 +137,30 @@ namespace BirthDayS
         }
 
         //Если сработал таймер смены цвета
-        private void colorChandgeTimerTick(object sender, EventArgs e)
+        private void ColorChandgeTimerTick(object sender, EventArgs e)
         {
-            this.BackColor = MultiColoBG[CurrBGid]; //Берем из масива цветов цвет по id (CurrBGid), и устанавливаем в качестве фона
-            CurrBGid++; //Инкрементируем
+            BackColor = _colorRotation[_colorRotation_id];
+            _colorRotation_id++;
 
-            //И смотрим за выходом за размер массива!!!
-            if (CurrBGid >= MultiColoBG.Length)
-                CurrBGid = 0;
+            if(_colorRotation_id >= _colorRotation.Length)
+                _colorRotation_id = 0;
         }
 
         //Если сработал таймер выхода
-        private void exitTimerTick(object sender, EventArgs e)
+        private void ExitTimerTick(object sender, EventArgs e)
         {
             //То просто закрываем эту форму
-            player1.Dispose();
-            player2.Dispose();
-            colorChangeTimer.Dispose();
-            exitTimer.Dispose();
-            this.Close();
+            _player1.Dispose();
+            _player2.Dispose();
+            _colorChangeTimer.Dispose();
+            _exitTimer.Dispose();
+            Close();
         }
 
         private void copyright_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            AboutBox about = new AboutBox();
-            this.TopMost = false;
+            var about = new AboutBox();
+            TopMost = false;
             about.TopMost = true;
             about.ShowDialog();
         }
