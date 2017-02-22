@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "BirthDayS"
-#define MyAppVersion "2.0"
+#define MyAppVersion "2.1"
 #define MyAppPublisher "Danil 'scrolltex' Kalashnikov"
 #define MyAppURL "http://www.scrolltex.ru"
 #define MyAppExeName "BirthDayS.exe"
@@ -23,7 +23,7 @@ DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 OutputBaseFilename=BirthDayS-setup
-SetupIconFile=D:\Projects\BirthDayS\BirthDayS\BDIcon.ico
+SetupIconFile=C:\Projects\Archive\BirthDayS\BirthDayS\app.ico
 Compression=lzma
 SolidCompression=yes
 
@@ -35,12 +35,12 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
 
 [Files]
-Source: "D:\Projects\BirthDayS\BirthDayS\bin\Release\BirthDayS.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Projects\BirthDayS\BirthDayS_Tools\bin\Release\BDTools.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Projects\BirthDayS\BIRTH.DAY"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Projects\BirthDayS\Birthday1.wav"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Projects\BirthDayS\Birthday2.wav"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Projects\BirthDayS\readme.docx"; DestDir: "{app}"; Flags: isreadme
+Source: "C:\Projects\Archive\BirthDayS\BirthDayS\bin\Release\BirthDayS.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Projects\Archive\BirthDayS\BirthDayS_Tools\bin\Release\BDTools.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Projects\Archive\BirthDayS\BIRTH.DAY"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Projects\Archive\BirthDayS\Birthday1.wav"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Projects\Archive\BirthDayS\Birthday2.wav"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Projects\Archive\BirthDayS\readme.docx"; DestDir: "{app}"; Flags: isreadme
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

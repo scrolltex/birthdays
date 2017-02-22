@@ -36,7 +36,7 @@
     <StartupObject>BirthDayS_Tools.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>BDIcon.ico</ApplicationIcon>
+    <ApplicationIcon>app.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <NoWin32Manifest>true</NoWin32Manifest>
@@ -54,12 +54,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="About.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="About.Designer.cs">
-      <DependentUpon>About.cs</DependentUpon>
-    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -68,9 +62,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="About.resx">
-      <DependentUpon>About.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -109,7 +100,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="BDIcon.ico" />
+    <Content Include="app.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

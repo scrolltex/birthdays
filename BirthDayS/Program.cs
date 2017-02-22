@@ -4,11 +4,14 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 
+// ReSharper disable LocalizableElement
+// ReSharper disable once StringIndexOfIsCultureSpecific.1
+
 namespace BirthDayS
 {
     static class Program
     {
-        private static readonly Encoding DosEnc = Encoding.GetEncoding("CP866"); //DOS кодировка
+        private static Encoding _enc = Encoding.UTF8;// Стандартно DOS кодировка
         private static string _filename = Application.StartupPath + @"\BIRTH.DAY"; //Имя и расположение файла базы данных
         private static readonly string LastStartFile = Application.LocalUserAppDataPath.Remove(Application.LocalUserAppDataPath.IndexOf(Application.ProductVersion)) + @"\LastStart"; //Имя и расположение файла проверки запусков
 
@@ -16,34 +19,38 @@ namespace BirthDayS
         private static int _lastStartDate = 0; //Дата последнего включения программы
         private static bool _lastStartCheck = false; //Нужна ли проверка последнего включения
 
-        private static List<string> _names = new List<string>(); //Полочка для имен
-        private static List<string> _dates = new List<string>(); //Полочка для дат
+        private static readonly List<string> Names = new List<string>(); //Полочка для имен
+        private static readonly List<string> Dates = new List<string>(); //Полочка для дат
 
         [STAThread]
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
+            
             if(args.Length != 0)
             {
-                for (var c = 0; c < args.Length; c++)
+                for (var i = 0; i < args.Length; i++)
                 {
-                    if(!args[c].StartsWith("-"))
+                    if(!args[i].StartsWith("-"))
                         continue;
 
-                    switch(args[c])
+                    switch(args[i])
                     {
+                        case "-enc":
+                            _enc = Encoding.GetEncoding(args[++i]);
+                            break;
+
                         case "-ls":
                             _lastStartCheck = true;
                             break;
 
                         case "-cf ":
-                            _filename = args[++c];
+                            _filename = args[++i];
                             break;
 
                         default:
-                            Error("Неопознаная команда: " + args[c]);
+                            Error("Неопознаная команда: " + args[i]);
                             break;
                     }
                 }
@@ -92,7 +99,7 @@ namespace BirthDayS
             {
                 try
                 {
-                    using (var reader = new StreamReader(_filename, DosEnc))
+                    using (var reader = new StreamReader(_filename, _enc))
                     {
                         while(!reader.EndOfStream) //Читаем все до конца
                         {
@@ -101,8 +108,8 @@ namespace BirthDayS
                                 continue;
 
                             //Первые 9 символов - это дата, кидаем на полочку с датами. Остальное это имя
-                            _dates.Add(buff.Substring(0, 8));
-                            _names.Add(buff.Substring(9));
+                            Dates.Add(buff.Substring(0, 8));
+                            Names.Add(buff.Substring(9));
                         }
 
                         reader.Close(); 
@@ -114,24 +121,24 @@ namespace BirthDayS
 #endif
 
                     //Разбираем все даты на полочке
-                    for(var i = 0; i < _dates.Count; i++)
+                    for(var i = 0; i < Dates.Count; i++)
                     {
                         //Пропуск дней рождения не в текущем месяце
-                        if(Convert.ToInt32(_dates[i].Substring(3, 2)) != _currDate.Month)
+                        if(Convert.ToInt32(Dates[i].Substring(3, 2)) != _currDate.Month)
                             continue;
 
-                        var day = Convert.ToInt32(_dates[i].Substring(0, 2));
+                        var day = Convert.ToInt32(Dates[i].Substring(0, 2));
 
                         //Если день рождения сегодня, то поздравляем
                         if(day == _currDate.Day) 
                         {
-                            var msg = new MsgForm(_names[i], MsgForm.DisplayMode.Today);
+                            var msg = new MsgForm(Names[i], MsgForm.DisplayMode.Today);
                             msg.ShowDialog();
                             msg.Dispose();
                         }
                         else if (day == _currDate.AddDays(1).Day) //Если день рождения завтра, то выводим сообщение
                         {
-                            var msg = new MsgForm(_names[i], MsgForm.DisplayMode.Tomorrow);
+                            var msg = new MsgForm(Names[i], MsgForm.DisplayMode.Tomorrow);
                             msg.ShowDialog();
                             msg.Dispose();
                         }
@@ -141,7 +148,7 @@ namespace BirthDayS
                             if (day == _currDate.AddDays(2).Day ||
                                 day == _currDate.AddDays(3).Day)
                             {
-                                var msg = new MsgForm(_names[i], MsgForm.DisplayMode.Soon);
+                                var msg = new MsgForm(Names[i], MsgForm.DisplayMode.Soon);
                                 msg.ShowDialog();
                                 msg.Dispose();
                             }
@@ -152,7 +159,7 @@ namespace BirthDayS
                             if(day == _currDate.AddDays(-1).Day ||
                                day == _currDate.AddDays(-2).Day)
                             {
-                                var msg = new MsgForm(_names[i], MsgForm.DisplayMode.Gone);
+                                var msg = new MsgForm(Names[i], MsgForm.DisplayMode.Gone);
                                 msg.ShowDialog();
                                 msg.Dispose();
                             }

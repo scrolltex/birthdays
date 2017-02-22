@@ -30,10 +30,10 @@ namespace BirthDayS
                 switch(_mode)
                 {
                     case DisplayMode.Gone:
-                        return "День рождения прошло";
+                        return "С прошедшим днём рождения!";
 
                     case DisplayMode.Today:
-                        return "Поздравляем с днем рождения!";
+                        return "Поздравляем с днём рождения!";
 
                     case DisplayMode.Tomorrow:
                         return "Завтра день рождения!";

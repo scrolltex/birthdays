@@ -1,21 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using IWshRuntimeLibrary;
 using System.IO;
+using System.Text;
+
+// ReSharper disable LocalizableElement
 
 namespace BirthDayS_Tools
 {
     public partial class Form1 : Form
     {
-        static DateTime CurrDate = DateTime.Now; //Текущее дата и время
-
         public Form1()
         {
             InitializeComponent();
@@ -23,44 +17,27 @@ namespace BirthDayS_Tools
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.KeyDown += new KeyEventHandler(this.KeyDowned);
+            foreach(var enc in Encoding.GetEncodings())
+                dataEncoding.Items.Add(enc.DisplayName);
+            
+            dataEncoding.SelectedIndex = dataEncoding.Items.IndexOf(Encoding.UTF8.EncodingName);
+
+            OtherBaseDir_Text.Enabled = OtherBaseDir_cb.Checked;
+            OtherBaseDir_Find.Enabled = OtherBaseDir_cb.Checked;
         }
-
-        private void KeyDowned(object sender, KeyEventArgs e)
-        {
-            switch(e.KeyCode)
-            {
-                case Keys.Escape:
-                    Application.Exit();
-                    break;
-
-                case Keys.F1:
-                    About about = new About();
-                    about.ShowDialog();
-                    break;
-
-                case Keys.F6:
-                    CreateShortcut();
-                    break;
-
-                case Keys.F9:
-                    DeleteShortcut();
-                    break;
-            }
-        }
-
-        private void DeleteShortcut()
+        
+        private static void DeleteShortcut()
         {
             try
             {
-                WshShell WshShell = new WshShell();
-                string DesktopDir = (string)WshShell.SpecialFolders.Item("Startup");
-                System.IO.File.Delete(DesktopDir + @"\BirthDayS.lnk");
+                var shell = new WshShell();
+                var startup = shell.SpecialFolders.Item("Startup").ToString();
+                System.IO.File.Delete(startup + @"\BirthDayS.lnk");
 
                 MessageBox.Show("Успешно удалено!",
-                                   Application.CompanyName + "`s " + Application.ProductName,
+                                   Application.ProductName,
                                    MessageBoxButtons.OK,
-                                   MessageBoxIcon.Information); //Выводим диалоговое окно
+                                   MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
@@ -72,36 +49,34 @@ namespace BirthDayS_Tools
         {
             try
             {
-                // Создание объекта оболочки Windows Script Host (WSH shell object)
-                WshShell WshShell = new WshShell();
-                string DesktopDir = (string)WshShell.SpecialFolders.Item("Startup");
-                IWshShortcut Shortcut;
+                var shell = new WshShell();
+                var startup = shell.SpecialFolders.Item("Startup").ToString();
 
                 // Файлы ярлыков имеют (скрытое) расширение .lnk
-                Shortcut = (IWshShortcut)WshShell.CreateShortcut(DesktopDir + @"\BirthDayS.lnk");
+                var shortcut = (IWshShortcut)shell.CreateShortcut(startup + @"\BirthDayS.lnk");
 
+                var arguments = "";
 
-                string Arguments = "";
-                if (LSC_cb.Checked)
-                {
-                    Arguments += " -ls";
-                }
+                if(LSC_cb.Checked)
+                    arguments += " -ls";
+
                 if(OtherBaseDir_cb.Checked)
-                {
-                    Arguments += " -cf " + OtherBaseDir_Text.Text; 
-                }
+                    arguments += " -cf " + OtherBaseDir_Text.Text;
+
+                if(dataEncoding.SelectedIndex != dataEncoding.Items.IndexOf(Encoding.UTF8.EncodingName))
+                    arguments += " -enc " + Encoding.GetEncodings()[dataEncoding.SelectedIndex].Name;
 
                 // Задание некоторых простых свойств ярлыка.
-                Shortcut.TargetPath = Application.StartupPath + @"\BirthDayS.exe";
-                Shortcut.Arguments = Arguments;
-                Shortcut.WindowStyle = 1;
-                Shortcut.WorkingDirectory = DesktopDir;
-                Shortcut.IconLocation = "notepad.exe, 0"; // Значком ярлыка будет первый значок из файла notepad.exe
+                shortcut.TargetPath = Application.StartupPath + @"\BirthDayS.exe";
+                shortcut.Arguments = arguments;
+                shortcut.WindowStyle = 1;
+                shortcut.WorkingDirectory = startup;
+                shortcut.IconLocation = Application.StartupPath + @"\BirthDayS.exe" + ", 0";
 
-                Shortcut.Save(); // Сохранение файла ярлыка
+                shortcut.Save(); // Сохранение файла ярлыка
 
                 MessageBox.Show("Успешно создано!",
-                                   Application.CompanyName + "`s " + Application.ProductName,
+                                   Application.ProductName,
                                    MessageBoxButtons.OK,
                                    MessageBoxIcon.Information); //Выводим диалоговое окно
             }
@@ -111,20 +86,21 @@ namespace BirthDayS_Tools
             }
         }
 
-        static public void Error(string msg)
+        public static void Error(string msg)
         {
-            if (MessageBox.Show("Ошибка:\n" + msg + "\n\nСохранить в лог ошибок?",
-                               Application.CompanyName + "`s " + Application.ProductName,
-                               MessageBoxButtons.YesNoCancel,
-                               MessageBoxIcon.Error) == DialogResult.Yes)//Выводим диалоговое окно, с текстом ошибки
+            MessageBox.Show("Ошибка:\n" + msg,
+                Application.ProductName,
+                MessageBoxButtons.YesNoCancel,
+                MessageBoxIcon.Error);
+
+            using(var sw = new StreamWriter("errors.log", true))
             {
-                StreamWriter sw = new StreamWriter("Errors.ser", true);
-                sw.WriteLine("Время: " + CurrDate.Day + "." + CurrDate.Month + " " + CurrDate.Hour + ":" + CurrDate.Minute);
+                var date = DateTime.Now;
+                sw.WriteLine("Время: " + date.Day + "." + date.Month + " " + date.Hour + ":" + date.Minute);
                 sw.WriteLine("ОС: " + Environment.OSVersion);
                 sw.WriteLine("Ошибка:\n" + msg);
-                sw.WriteLine("===========================================================================================");
+                sw.WriteLine();
                 sw.Close();
-                sw.Dispose();
             }
 
             Application.Exit();
@@ -142,13 +118,17 @@ namespace BirthDayS_Tools
 
         private void OtherBaseDir_Find_Click(object sender, EventArgs e)
         {
-            OpenFileDialog fd = new OpenFileDialog();
+            var fd = new OpenFileDialog();
             fd.Multiselect = false; 
             
             if(fd.ShowDialog() != DialogResult.Cancel)
-            {
                 OtherBaseDir_Text.Text = fd.FileName;
-            }
+        }
+
+        private void OtherBaseDir_cb_CheckedChanged(object sender, EventArgs e)
+        {
+            OtherBaseDir_Text.Enabled = OtherBaseDir_cb.Checked;
+            OtherBaseDir_Find.Enabled = OtherBaseDir_cb.Checked;
         }
     }
 }
