@@ -11,11 +11,11 @@ namespace BirthDayS
 {
     static class Program
     {
-        private static Encoding _enc = Encoding.UTF8;// Стандартно DOS кодировка
+        private static Encoding _enc = Encoding.GetEncoding("CP866");// Стандартно DOS кодировка
         private static string _filename = Application.StartupPath + @"\BIRTH.DAY"; //Имя и расположение файла базы данных
         private static readonly string LastStartFile = Application.LocalUserAppDataPath.Remove(Application.LocalUserAppDataPath.IndexOf(Application.ProductVersion)) + @"\LastStart"; //Имя и расположение файла проверки запусков
 
-        private static DateTime _currDate = DateTime.Now; //Текущее дата и время
+        private static DateTime _currDate = DateTime.Today; //Текущее дата и время
         private static int _lastStartDate = 0; //Дата последнего включения программы
         private static bool _lastStartCheck = false; //Нужна ли проверка последнего включения
 
@@ -116,37 +116,44 @@ namespace BirthDayS
                     }
                     
 #if DEBUG
-                    _names = new List<string> { "Иванов Иван Иванович" };
-                    _dates = new List<string> { _currDate.ToShortDateString() };
+                    // Сегодня
+                    Names.Add("Иванов Иван Иванович (др сегодня)");
+                    Dates.Add(_currDate.ToShortDateString());
+
+                    // Завтра
+                    Names.Add("Иванов Иван Иванович (др завтра)");
+                    Dates.Add(_currDate.AddDays(1).ToShortDateString());
 #endif
 
                     //Разбираем все даты на полочке
                     for(var i = 0; i < Dates.Count; i++)
                     {
+                        var checkDate = new DateTime(_currDate.Year,
+                                                     Convert.ToInt32(Dates[i].Substring(3, 2)),
+                                                     Convert.ToInt32(Dates[i].Substring(0, 2)));
+
                         //Пропуск дней рождения не в текущем месяце
                         if(Convert.ToInt32(Dates[i].Substring(3, 2)) != _currDate.Month)
                             continue;
-
-                        var day = Convert.ToInt32(Dates[i].Substring(0, 2));
-
+                        
                         //Если день рождения сегодня, то поздравляем
-                        if(day == _currDate.Day) 
+                        if((checkDate - _currDate).Days == 0) 
                         {
                             var msg = new MsgForm(Names[i], MsgForm.DisplayMode.Today);
                             msg.ShowDialog();
                             msg.Dispose();
                         }
-                        else if (day == _currDate.AddDays(1).Day) //Если день рождения завтра, то выводим сообщение
+                        else if((checkDate - _currDate.AddDays(1)).Days == 0) //Если день рождения завтра, то выводим сообщение
                         {
                             var msg = new MsgForm(Names[i], MsgForm.DisplayMode.Tomorrow);
                             msg.ShowDialog();
                             msg.Dispose();
                         }
 
-                        if (_currDate.DayOfWeek == DayOfWeek.Friday) //А если сегодня пятница, то еще проверяем на воскресенье с понедельником
+                        if(_currDate.DayOfWeek == DayOfWeek.Friday) //А если сегодня пятница, то еще проверяем на воскресенье с понедельником
                         {
-                            if (day == _currDate.AddDays(2).Day ||
-                                day == _currDate.AddDays(3).Day)
+                            if((checkDate - _currDate.AddDays(2)).Days == 0 ||
+                               (checkDate - _currDate.AddDays(3)).Days == 0)
                             {
                                 var msg = new MsgForm(Names[i], MsgForm.DisplayMode.Soon);
                                 msg.ShowDialog();
@@ -156,8 +163,8 @@ namespace BirthDayS
 
                         if(_currDate.DayOfWeek == DayOfWeek.Monday) //Прошедшее
                         {
-                            if(day == _currDate.AddDays(-1).Day ||
-                               day == _currDate.AddDays(-2).Day)
+                            if((checkDate - _currDate.AddDays(-1)).Days == 0 ||
+                               (checkDate - _currDate.AddDays(-2)).Days == 0)
                             {
                                 var msg = new MsgForm(Names[i], MsgForm.DisplayMode.Gone);
                                 msg.ShowDialog();
